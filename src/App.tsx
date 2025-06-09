@@ -11,7 +11,7 @@ function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadLogs().then(setLogs);
+    setLogs([]);
   }, []);
 
   useEffect(() => {
@@ -40,6 +40,10 @@ function App() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleClearLogs = () => {
+    setLogs([]);
   };
 
   return (
@@ -86,8 +90,12 @@ function App() {
       </div>
 
       <div className={`logs-section ${showLogs ? 'visible' : ''}`}>
+        <button className="logs-close-button" onClick={() => setShowLogs(false)}>
+          ✕
+        </button>
         <div className="logs-container">
           <h2>История запросов</h2>
+          <button onClick={handleClearLogs} className="clear-logs-button">Очистить историю</button>
           <div className="logs">
             {logs.map((log, index) => (
               <div key={index} className="log-entry">

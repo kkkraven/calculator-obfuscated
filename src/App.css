@@ -1,13 +1,14 @@
 :root {
-  --primary-color: #7ed6df;
-  --primary-dark: #22a6b3;
-  --background-dark: #0d192a;
-  --text-light: #ffffff;
-  --text-muted: #a0aec0;
-  --bot-message-bg: #ffffff;
-  --user-message-bg: #7ed6df;
-  --border-radius: 12px;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --primary-color: #00bcd4;
+  --primary-dark: #0097a7;
+  --background-dark: #121212;
+  --surface-dark: #1e1e1e;
+  --text-light: #e0e0e0;
+  --text-muted: #b0b0b0;
+  --bot-message-bg: #2a2a2a;
+  --user-message-bg: #03a9f4;
+  --border-radius: 8px;
+  --shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 body {
@@ -34,22 +35,23 @@ body {
 }
 
 .header h1 {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
   color: var(--primary-color);
   margin: 0;
   margin-bottom: 10px;
+  text-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
 }
 
 .header p {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-muted);
   margin: 0;
 }
 
 .chat-container {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-dark);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   padding: 20px;
@@ -72,20 +74,20 @@ body {
   padding: 15px;
   border-radius: var(--border-radius);
   position: relative;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .message.user {
   align-self: flex-end;
   background-color: var(--user-message-bg);
-  color: var(--background-dark);
+  color: #ffffff;
   border-bottom-right-radius: 4px;
 }
 
 .message.assistant {
   align-self: flex-start;
   background-color: var(--bot-message-bg);
-  color: var(--background-dark);
+  color: var(--text-light);
   border-bottom-left-radius: 4px;
 }
 
@@ -102,7 +104,7 @@ body {
   display: flex;
   gap: 10px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface-dark);
   border-radius: var(--border-radius);
   margin-top: auto;
 }
@@ -110,9 +112,9 @@ body {
 input[type="text"] {
   flex: 1;
   padding: 12px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #444;
   border-radius: var(--border-radius);
-  background: rgba(255, 255, 255, 0.1);
+  background: #2a2a2a;
   color: var(--text-light);
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -121,7 +123,7 @@ input[type="text"] {
 input[type="text"]:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.15);
+  background: #333;
 }
 
 input[type="text"]::placeholder {
@@ -131,7 +133,7 @@ input[type="text"]::placeholder {
 button {
   padding: 12px 24px;
   background-color: var(--primary-color);
-  color: var(--background-dark);
+  color: #121212;
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -145,11 +147,12 @@ button {
 
 button:hover {
   background-color: var(--primary-dark);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 button:disabled {
-  background-color: var(--text-muted);
+  background-color: #555;
+  color: #ccc;
   cursor: not-allowed;
   transform: none;
 }
@@ -158,27 +161,28 @@ button:disabled {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   color: var(--text-light);
   padding: 10px 20px;
   border-radius: var(--border-radius);
   z-index: 100;
+  backdrop-filter: blur(5px);
 }
 
 .toggle-logs-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
 }
 
 .logs-section {
   position: fixed;
   top: 0;
   right: 0;
-  width: 400px;
+  width: 450px;
   height: 100vh;
-  background: var(--background-dark);
-  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+  background: var(--surface-dark);
+  box-shadow: -6px 0 15px rgba(0, 0, 0, 0.4);
   transform: translateX(100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease-out;
   z-index: 1000;
   padding: 20px;
   overflow-y: auto;
@@ -188,27 +192,70 @@ button:disabled {
   transform: translateX(0);
 }
 
+.logs-close-button {
+  position: sticky;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 10px;
+  align-self: flex-end;
+  z-index: 1001;
+  transition: color 0.2s ease;
+}
+
+.logs-close-button:hover {
+  color: var(--primary-color);
+}
+
 .logs-container {
   padding: 20px;
+  padding-top: 60px;
 }
 
 .logs-container h2 {
   color: var(--primary-color);
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.clear-logs-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
   margin-bottom: 20px;
-  font-size: 1.5rem;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background-color 0.2s ease;
+}
+
+.clear-logs-button:hover {
+  background-color: #d32f2f;
 }
 
 .logs {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
 }
 
 .log-entry {
-  background: rgba(255, 255, 255, 0.05);
+  background: #282828;
   border-radius: var(--border-radius);
-  padding: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 18px;
+  border: 1px solid #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .log-entry p {
@@ -217,26 +264,27 @@ button:disabled {
 }
 
 .feedback-form {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #444;
 }
 
 .feedback-form input {
   width: 100%;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  background: #3a3a3a;
+  border: 1px solid #555;
   border-radius: 4px;
   color: var(--text-light);
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .loading {
   text-align: center;
-  padding: 10px;
-  color: var(--text-muted);
+  padding: 15px;
+  color: var(--primary-color);
   font-style: italic;
+  font-weight: 500;
 }
 
 .footer {
@@ -245,4 +293,6 @@ button:disabled {
   color: var(--text-muted);
   font-size: 0.9rem;
   margin-top: auto;
+  border-top: 1px solid #2a2a2a;
+  padding-top: 30px;
 } 
