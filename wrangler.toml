@@ -1,5 +1,5 @@
 name = "calculator-api"
-main = "worker/index.js"
+main = "test_worker.js"
 compatibility_date = "2024-01-01"
 
 [vars]
