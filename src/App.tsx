@@ -78,7 +78,7 @@ function App() {
       <h1>Hello World!</h1>
       <div className="chat-container">
         <div className="messages">
-          {messages.map((message, index) => (
+          {messages && messages.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
           {isLoading && (
@@ -103,7 +103,7 @@ function App() {
       <div className="logs-container">
         <h2>История запросов</h2>
         <div className="logs">
-          {logs.map((log) => (
+          {logs && logs.map((log) => (
             <div key={log.requestId} className="log-entry">
               <p><strong>Запрос:</strong> {log.query}</p>
               <p><strong>Ответ:</strong> {log.response}</p>
