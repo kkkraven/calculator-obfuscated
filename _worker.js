@@ -131,8 +131,8 @@ const PRICING_RULES_PROMPT = `
 app.post('/api/ask', async (c) => {
   try {
     console.log("Received /api/ask request");
-    const { query } = await c.req.json();
-    console.log("Query received: ", query);
+    const { message } = await c.req.json();
+    console.log("Message received: ", message);
     const genAI = new GoogleGenerativeAI(c.env.GOOGLE_API_KEY, { api_endpoint: 'generativelanguage.googleapis.com' }); // Инициализация здесь с явным эндпоинтом
     console.log("GoogleGenerativeAI initialized.");
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-001' });
@@ -200,7 +200,7 @@ ${historicalOrdersPrompt}
 *Примечание: Это предварительная оценка. Точная стоимость может быть скорректирована после оценки макета и уточнения всех деталей заказа.*
 
 
-Клиентский запрос: ${query}
+Клиентский запрос: ${message}
 `;
 
     const result = await model.generateContent(combinedPrompt);
@@ -214,7 +214,7 @@ ${historicalOrdersPrompt}
     await c.env.LOGS.put(requestId, JSON.stringify({
       requestId,
       timestamp: new Date().toISOString(),
-      query,
+      query: message,
       response: text,
       price: 0.00025 // Примерная стоимость запроса
     }));
