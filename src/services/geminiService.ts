@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://calculator-api.46261vor.workers.dev';
+
 interface LogEntry {
   requestId: string;
   timestamp: string;
@@ -9,7 +11,7 @@ interface LogEntry {
 
 export async function askGemini(query: string): Promise<string> {
   try {
-    const response = await fetch('/api/ask', {
+    const response = await fetch(`${API_BASE_URL}/api/ask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,7 +33,7 @@ export async function askGemini(query: string): Promise<string> {
 
 export async function getLogs(): Promise<LogEntry[]> {
   try {
-    const response = await fetch('/api/logs');
+    const response = await fetch(`${API_BASE_URL}/api/logs`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch logs');
@@ -47,7 +49,7 @@ export async function getLogs(): Promise<LogEntry[]> {
 
 export async function sendFeedback(requestId: string, actualPrice: number): Promise<boolean> {
   try {
-    const response = await fetch('/api/feedback', {
+    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
