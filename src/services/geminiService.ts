@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://calculator-api.46261vor.workers.dev';
+const API_URL = 'https://calculator-api.46261vor.workers.dev';
 
 interface LogEntry {
   requestId: string;
@@ -9,31 +9,47 @@ interface LogEntry {
   feedback?: number;
 }
 
-export async function askGemini(query: string): Promise<string> {
+export async function sendMessage(message: string): Promise<string> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/ask`, {
+    const response = await fetch(`${API_URL}/api/ask`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ message }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get response from Gemini');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     return data.response;
   } catch (error) {
-    console.error('Error asking Gemini:', error);
+    console.error('Error sending message:', error);
     throw error;
+  }
+}
+
+export async function loadLogs(): Promise<Array<{ request: string, response: string, actualPrice?: string }>> {
+  try {
+    const response = await fetch(`${API_URL}/api/logs`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.logs || [];
+  } catch (error) {
+    console.error('Error loading logs:', error);
+    return [];
   }
 }
 
 export async function getLogs(): Promise<LogEntry[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/logs`);
+    const response = await fetch(`${API_URL}/api/logs`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch logs');
@@ -49,7 +65,7 @@ export async function getLogs(): Promise<LogEntry[]> {
 
 export async function sendFeedback(requestId: string, actualPrice: number): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+    const response = await fetch(`${API_URL}/api/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

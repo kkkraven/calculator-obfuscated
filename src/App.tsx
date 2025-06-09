@@ -1,131 +1,121 @@
-import { useState, useEffect } from 'react';
-import { askGemini, getLogs, sendFeedback } from './services/geminiService';
-import ChatMessage from './components/ChatMessage';
+import { useState, useEffect, useRef } from 'react';
+import { sendMessage, loadLogs } from './services/geminiService';
 import './App.css';
 
-interface Message {
-  text: string;
-  sender: 'user' | 'assistant';
-  timestamp: string;
-}
-
 function App() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<Array<{ request: string, response: string, actualPrice?: string }>>([]);
+  const [showLogs, setShowLogs] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadLogs();
+    loadLogs().then(setLogs);
   }, []);
 
-  const loadLogs = async () => {
-    try {
-      const logsData = await getLogs();
-      setLogs(logsData);
-    } catch (error) {
-      console.error('Failed to load logs:', error);
-    }
-  };
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = {
-      text: input,
-      sender: 'user',
-      timestamp: new Date().toISOString()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage = input.trim();
     setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
     try {
-      const response = await askGemini(input);
-      const assistantMessage: Message = {
-        text: response,
-        sender: 'assistant',
-        timestamp: new Date().toISOString()
-      };
-      setMessages(prev => [...prev, assistantMessage]);
-      await loadLogs();
+      const response = await sendMessage(userMessage);
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      loadLogs().then(setLogs);
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage: Message = {
-        text: 'Произошла ошибка при обработке запроса.',
-        sender: 'assistant',
-        timestamp: new Date().toISOString()
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Произошла ошибка при обработке запроса. Пожалуйста, попробуйте еще раз.' 
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFeedback = async (requestId: string, actualPrice: number) => {
-    try {
-      await sendFeedback(requestId, actualPrice);
-      await loadLogs();
-    } catch (error) {
-      console.error('Failed to send feedback:', error);
-    }
-  };
-
   return (
     <div className="app">
-      <h1>Hello World!</h1>
+      <div className="header">
+        <h1>Чат-Калькулятор Упаковки</h1>
+        <p>Опишите ваш заказ, и я рассчитаю примерную стоимость.</p>
+      </div>
+
+      <button 
+        className="toggle-logs-button"
+        onClick={() => setShowLogs(!showLogs)}
+      >
+        {showLogs ? '✕' : '⏳ История запросов'}
+      </button>
+
       <div className="chat-container">
         <div className="messages">
-          {messages && messages.map((message, index) => (
-            <ChatMessage key={index} message={message} />
+          {messages.map((message, index) => (
+            <div key={index} className={`message ${message.role}`}>
+              {message.content}
+            </div>
           ))}
           {isLoading && (
-            <div className="message assistant">
-              <div className="loading">...</div>
+            <div className="loading">
+              Рассчитываю стоимость...
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
+
         <form onSubmit={handleSubmit} className="input-form">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Введите ваш вопрос..."
+            placeholder="Введите ваш ответ..."
             disabled={isLoading}
           />
-          <button type="submit" disabled={isLoading}>
+          <button type="submit" disabled={isLoading || !input.trim()}>
             Отправить
           </button>
         </form>
       </div>
-      <div className="logs-container">
-        <h2>История запросов</h2>
-        <div className="logs">
-          {logs && logs.map((log) => (
-            <div key={log.requestId} className="log-entry">
-              <p><strong>Запрос:</strong> {log.query}</p>
-              <p><strong>Ответ:</strong> {log.response}</p>
-              <p><strong>Предполагаемая цена:</strong> {log.price || 'Не указана'}</p>
-              {!log.feedback && (
+
+      <div className={`logs-section ${showLogs ? 'visible' : ''}`}>
+        <div className="logs-container">
+          <h2>История запросов</h2>
+          <div className="logs">
+            {logs.map((log, index) => (
+              <div key={index} className="log-entry">
+                <p><strong>Запрос:</strong> {log.request}</p>
+                <p><strong>Ответ:</strong> {log.response}</p>
+                {log.actualPrice && (
+                  <p><strong>Фактическая цена:</strong> {log.actualPrice}</p>
+                )}
                 <div className="feedback-form">
                   <input
-                    type="number"
-                    placeholder="Фактическая цена"
+                    type="text"
+                    placeholder="Введите фактическую цену..."
                     onChange={(e) => {
-                      const price = parseFloat(e.target.value);
-                      if (!isNaN(price)) {
-                        handleFeedback(log.requestId, price);
-                      }
+                      const newLogs = [...logs];
+                      newLogs[index] = { ...log, actualPrice: e.target.value };
+                      setLogs(newLogs);
                     }}
                   />
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      <footer className="footer">
+        © 2025 Fa.tura AI. Все расчеты являются предварительными.
+      </footer>
     </div>
   );
 }
