@@ -1,0 +1,3 @@
+import { useState, useEffect } from 'react';
+import { askGemini, getLogs, sendFeedback } from './services/geminiService';
+// ... existing code ... 

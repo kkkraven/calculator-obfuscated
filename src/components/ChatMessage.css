@@ -1,0 +1,32 @@
+.message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.message.user {
+  background-color: #e3f2fd;
+  margin-left: auto;
+}
+
+.message.assistant {
+  background-color: #f5f5f5;
+  margin-right: auto;
+}
+
+.message-content {
+  word-wrap: break-word;
+}
+
+.loading {
+  display: inline-block;
+  animation: loading 1s infinite;
+}
+
+@keyframes loading {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+  100% { content: '.'; }
+} 

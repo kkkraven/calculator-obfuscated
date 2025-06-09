@@ -1,0 +1,14 @@
+name = "calculator-api"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+GOOGLE_API_KEY = "AIzaSyA4_lNUnQop6JnFg4fa2P5r07oRQigQELg"
+
+[[kv_namespaces]]
+binding = "LOGS"
+id = "16577da614314e11a181583abff72a9b"
+preview_id = "e52054312ed94a899e841cef220b7ef9"
+
+[site]
+bucket = "./dist"
