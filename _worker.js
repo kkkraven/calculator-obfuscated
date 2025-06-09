@@ -14,14 +14,34 @@ const HANDLE_ATTACHMENTS = ['Вклеенные', 'На люверсах'];
 // Функция для парсинга CSV-строки
 function parseCSV(csvString) {
   const lines = csvString.trim().split('\n');
-  const headers = lines[0].split(',').map(header => header.trim());
+  // Регулярное выражение для разделения CSV, учитывающее кавычки
+  // Источник: https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch07s02.html
+  const csvRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g;
+
+  const parseLine = (line) => {
+    const values = [];
+    let match;
+    while ((match = csvRegex.exec(line)) !== null) {
+      // Если есть группа 1, значит это значение в кавычках
+      if (match[1] !== undefined) {
+        values.push(match[1].replace(/""/g, '"')); // Удаляем экранирование кавычек
+      } else if (match[2] !== undefined) {
+        values.push(match[2]);
+      } else {
+        values.push(''); // Пустое значение
+      }
+    }
+    return values.map(value => value.trim()); // Trim каждого значения
+  };
+
+  const headers = parseLine(lines[0]);
   const data = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
+    const values = parseLine(lines[i]);
     const row = {};
     for (let j = 0; j < headers.length; j++) {
-      row[headers[j]] = values[j] ? values[j].trim() : '';
+      row[headers[j]] = values[j] !== undefined ? values[j] : '';
     }
     data.push(row);
   }
