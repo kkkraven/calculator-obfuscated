@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "wrangler pages deploy . --project calculator-obfuscated --branch main --commit-dirty=true --production --log-level=debug",
+    "deploy": "wrangler pages deploy dist --project-name calculator-obfuscated --branch main --commit-dirty=true",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
