@@ -1,4 +1,5 @@
 declare module '*.css';
+declare module '*.png';
 
 declare type PagesFunction<Env = unknown, Params extends string = string, Data extends Record<string, unknown> = Record<string, unknown>> = (
   context: EventContext<Env, Params, Data>

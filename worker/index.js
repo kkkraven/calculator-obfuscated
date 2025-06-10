@@ -105,7 +105,7 @@ export default {
           status: 400,
           headers: { "Content-Type": "application/json" }
         });
-      }
+    }
 
       const logEntry = logs.get(requestId);
       if (!logEntry) {
@@ -216,7 +216,7 @@ export default {
         });
       }
 
-      const GOOGLE_API_KEY = "AIzaSyA4_lNUnQop6JnFg4fa2P5r07oRQigQELg";
+    const GOOGLE_API_KEY = "AIzaSyA4_lNUnQop6JnFg4fa2P5r07oRQigQELg";
       
       // Проверяем доступность API
       const availableEndpoint = await checkApiAvailability(GOOGLE_API_KEY);
@@ -230,7 +230,7 @@ export default {
       }
 
       const url = `${availableEndpoint}/v1/models/gemini-1.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
-      const payload = { contents: [{ parts: [{ text: message }] }] };
+    const payload = { contents: [{ parts: [{ text: message }] }] };
       
       console.log('Sending request to Gemini:', {
         url,
@@ -238,22 +238,22 @@ export default {
       });
 
       let geminiResponse, geminiResult;
-      try {
+    try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-        geminiResponse = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+      geminiResponse = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
           signal: controller.signal
-        });
+      });
 
         clearTimeout(timeoutId);
-        geminiResult = await geminiResponse.json();
+      geminiResult = await geminiResponse.json();
         console.log('Gemini response status:', geminiResponse.status);
         console.log('Gemini response:', geminiResult);
-      } catch (err) {
+    } catch (err) {
         console.error('Failed to connect to Gemini API:', err);
         if (err.name === 'AbortError') {
           return new Response(JSON.stringify({ error: "Request timeout" }), { 
@@ -267,13 +267,13 @@ export default {
           status: 502,
           headers: { "Content-Type": "application/json" }
         });
-      }
+    }
 
-      const answer =
-        geminiResult.candidates?.[0]?.content?.parts?.[0]?.text ||
-        geminiResult.candidates?.[0]?.content?.text ||
-        geminiResult.error?.message ||
-        "Нет ответа от модели";
+    const answer =
+      geminiResult.candidates?.[0]?.content?.parts?.[0]?.text ||
+      geminiResult.candidates?.[0]?.content?.text ||
+      geminiResult.error?.message ||
+      "Нет ответа от модели";
 
       // Сохраняем в кэш
       cache.set(cacheKey, {
@@ -295,7 +295,7 @@ export default {
         answer,
         requestId
       }), {
-        status: 200,
+      status: 200,
         headers: { 
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",

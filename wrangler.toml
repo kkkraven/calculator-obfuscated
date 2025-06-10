@@ -13,4 +13,8 @@ preview_id = "0b5c1c876b514d7a8e23f03b22e11831"
 [[kv_namespaces]]
 binding = "ORDERS_KB"
 id = "c68efb3304144eb386dfd4314931f366"
-preview_id = "your_orders_kb_preview_id_here"
+preview_id = "c68efb3304144eb386dfd4314931f366"
+
+[pages]
+name = "calculator-obfuscated"
+pages_build_output_dir = "dist"
